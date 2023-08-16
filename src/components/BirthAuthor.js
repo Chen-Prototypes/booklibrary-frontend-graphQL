@@ -1,22 +1,18 @@
-import { useMutation, gql } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { useEffect, useState } from "react";
-
-const CHANGE_BIRTH = gql`
-  mutation editAuthor($name: String!, $setBornTo: Int!) {
-    editAuthor(name: $name, setBornTo: $setBornTo) {
-      name
-    }
-  }
-`;
+import { CHANGE_BIRTH, ALL_AUTHORS } from "../queries";
 
 const BirthAuthor = () => {
   const [name, setName] = useState("");
   const [born, setBorn] = useState("");
 
+  const query_result = useQuery(ALL_AUTHORS);
+
   const [changeBirth, result] = useMutation(CHANGE_BIRTH, {
     onError: (error) => {
       console.log(error.graphQLErrors[0].message);
     },
+    refetchQueries: [{ query: ALL_AUTHORS }],
   });
 
   useEffect(() => {
@@ -34,14 +30,23 @@ const BirthAuthor = () => {
     setBorn("");
   };
 
+  if (query_result.loading) return <div>loading...</div>;
+  const authors = query_result.data.allAuthors;
+
   return (
     <div>
       <h2>Set birthyear</h2>
       <form onSubmit={submit}>
-        <div>
-          name:
-          <input value={name} onChange={(e) => setName(e.target.value)} />
-        </div>
+        <select value={name} onChange={(e) => setName(e.target.value)}>
+          <option value="" disabled>
+            Select an author
+          </option>
+          {authors.map((author) => (
+            <option key={author.id} value={author.name}>
+              {author.name}
+            </option>
+          ))}
+        </select>
         <div>
           birthyear:
           <input value={born} onChange={(e) => setBorn(e.target.value)} />
