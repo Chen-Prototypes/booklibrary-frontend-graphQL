@@ -10,7 +10,7 @@ const BirthAuthor = () => {
 
   const [changeBirth, result] = useMutation(CHANGE_BIRTH, {
     onError: (error) => {
-      console.log(error.graphQLErrors[0].message);
+      console.log("Could not change birthyear");
     },
     refetchQueries: [{ query: ALL_AUTHORS }],
   });
