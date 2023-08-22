@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useApolloClient } from "@apollo/client";
+import { useApolloClient, useSubscription } from "@apollo/client";
 
 import { Routes, Route, Link } from "react-router-dom";
 
@@ -9,9 +9,18 @@ import NewBook from "./pages/NewBook";
 import LoginForm from "./pages/LoginForm";
 import Recommended from "./pages/Recommended";
 
+import { BOOK_ADDED } from "./queries";
+
 const App = () => {
   const [token, setToken] = useState(null);
   const client = useApolloClient();
+
+  useSubscription(BOOK_ADDED, {
+    onData: ({ data }) => {
+      console.log(data);
+      window.alert("new book added");
+    },
+  });
 
   const logout = () => {
     setToken(null);

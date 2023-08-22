@@ -45,7 +45,6 @@ export const LOGIN = gql`
   }
 `;
 
-
 export const ALL_BOOKS = gql`
   query ($genre: String) {
     allBooks(genre: $genre) {
@@ -63,6 +62,19 @@ export const ME = gql`
   query {
     me {
       favoriteGenre
+    }
+  }
+`;
+
+export const BOOK_ADDED = gql`
+  subscription {
+    bookAdded {
+      title
+      author {
+        name
+      }
+      published
+      genres
     }
   }
 `;
