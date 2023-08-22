@@ -1,13 +1,13 @@
 import { useState } from "react";
-import { useApolloClient } from '@apollo/client'
+import { useApolloClient } from "@apollo/client";
 
 import { Routes, Route, Link } from "react-router-dom";
 
-import Authors from "./components/Authors";
-import Books from "./components/Books";
-import NewBook from "./components/NewBook";
-import BirthAuthor from "./components/BirthAuthor";
-import LoginForm from "./components/LoginForm";
+import Authors from "./pages/Authors";
+import Books from "./pages/Books";
+import NewBook from "./pages/NewBook";
+import LoginForm from "./pages/LoginForm";
+import Recommended from "./pages/Recommended";
 
 const App = () => {
   const [token, setToken] = useState(null);
@@ -29,19 +29,14 @@ const App = () => {
       ) : (
         <Link to="/login">login</Link>
       )}
+      <Link to="/recomended">recomended</Link>
 
       <Routes>
-        <Route
-          path="/"
-          element={
-            <>
-              <Authors /> <BirthAuthor />
-            </>
-          }
-        />
+        <Route path="/" element={<Authors />} />
         <Route path="/login" element={<LoginForm setToken={setToken} />} />
         <Route path="/books" element={<Books />} />
         <Route path="/add" element={<NewBook />} />
+        <Route path="recomended" element={<Recommended />} />
       </Routes>
     </div>
   );
