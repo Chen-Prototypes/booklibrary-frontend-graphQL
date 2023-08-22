@@ -5,8 +5,11 @@ import { ALL_BOOKS } from "../queries";
 const Books = () => {
   const [cur_genre, setGenre] = useState("");
 
-  const genres_query = useQuery(ALL_BOOKS, { variables: { genre: null } });
-  const result = useQuery(ALL_BOOKS, { variables: { genre: cur_genre } });
+  const genres_query = useQuery(ALL_BOOKS);
+  const result = useQuery(ALL_BOOKS, {
+    variables: { genre: cur_genre },
+    fetchPolicy: "network-only",
+  });
 
   if (result.loading || genres_query.loading) return <div>loading...</div>;
   if (result.error) return <div>Error fetching books!</div>;
