@@ -27,9 +27,11 @@ const authLink = setContext((_, { headers }) => {
     },
   };
 });
+// For Production
+// const httpLink = createHttpLink({ uri: "https://shelf-schema.fly.dev/" });
+// const wsLink = new GraphQLWsLink(createClient({ url: "ws://shelf-schema.fly.dev/" }));
 
 const httpLink = createHttpLink({ uri: "http://localhost:4000" });
-
 const wsLink = new GraphQLWsLink(createClient({ url: "ws://localhost:4000" }));
 
 const splitLink = split(

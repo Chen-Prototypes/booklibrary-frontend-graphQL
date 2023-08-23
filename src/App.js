@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useApolloClient, useSubscription } from "@apollo/client";
 
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { Container } from "@mui/material";
 
 import Authors from "./pages/Authors";
