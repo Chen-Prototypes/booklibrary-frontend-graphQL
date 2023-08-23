@@ -5,10 +5,13 @@ import { ALL_BOOKS } from "../queries";
 const Books = () => {
   const [cur_genre, setGenre] = useState("");
 
-  const genres_query = useQuery(ALL_BOOKS);
+  const genres_query = useQuery(ALL_BOOKS, {
+    fetchPolicy: "cache-and-network",
+  });
   const result = useQuery(ALL_BOOKS, {
     variables: { genre: cur_genre },
-    fetchPolicy: "network-only",
+    fetchPolicy: "cache-and-network",
+    pollInterval: 2000, // tmp fix, make it so app subscription updates all querys for each genre
   });
 
   if (result.loading || genres_query.loading) return <div>loading...</div>;

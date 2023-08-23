@@ -9,7 +9,23 @@ import NewBook from "./pages/NewBook";
 import LoginForm from "./pages/LoginForm";
 import Recommended from "./pages/Recommended";
 
-import { BOOK_ADDED } from "./queries";
+import { BOOK_ADDED, ALL_BOOKS } from "./queries";
+
+export const updateCache = (cache, query, addedBook) => {
+  const uniqByName = (a) => {
+    let seen = new Set();
+    return a.filter((item) => {
+      let k = item.name;
+      return seen.has(k) ? false : seen.add(k);
+    });
+  };
+
+  cache.updateQuery(query, ({ allBooks }) => {
+    return {
+      allBooks: uniqByName(allBooks.concat(addedBook)),
+    };
+  });
+};
 
 const App = () => {
   const [token, setToken] = useState(null);
@@ -18,7 +34,9 @@ const App = () => {
   useSubscription(BOOK_ADDED, {
     onData: ({ data }) => {
       console.log(data);
+      const addedBook = data.data.bookAdded;
       window.alert("new book added");
+      updateCache(client.cache, { query: ALL_BOOKS }, addedBook);
     },
   });
 
@@ -38,14 +56,14 @@ const App = () => {
       ) : (
         <Link to="/login">login</Link>
       )}
-      <Link to="/recomended">recomended</Link>
+      <Link to="/recommended">recommended</Link>
 
       <Routes>
         <Route path="/" element={<Authors />} />
         <Route path="/login" element={<LoginForm setToken={setToken} />} />
         <Route path="/books" element={<Books />} />
         <Route path="/add" element={<NewBook />} />
-        <Route path="recomended" element={<Recommended />} />
+        <Route path="/recommended" element={<Recommended />} />
       </Routes>
     </div>
   );

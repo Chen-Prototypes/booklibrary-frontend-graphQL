@@ -6,7 +6,10 @@ const BirthAuthor = () => {
   const [name, setName] = useState("");
   const [born, setBorn] = useState("");
 
-  const query_result = useQuery(ALL_AUTHORS);
+  const query_result = useQuery(ALL_AUTHORS, {
+    fetchPolicy: "network-only",
+    pollInterval: 2000, // tmp fix, see books 
+  });
 
   const [changeBirth, result] = useMutation(CHANGE_BIRTH, {
     onError: (error) => {
