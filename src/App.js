@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useApolloClient, useSubscription } from "@apollo/client";
 
 import { Routes, Route, Link } from "react-router-dom";
+import { Container } from "@mui/material";
 
 import Authors from "./pages/Authors";
 import Books from "./pages/Books";
@@ -10,6 +11,9 @@ import LoginForm from "./pages/LoginForm";
 import Recommended from "./pages/Recommended";
 
 import { BOOK_ADDED, ALL_BOOKS } from "./queries";
+
+import { AppBar, Button, Toolbar, Box } from "@mui/material";
+import { Link as RouterLink } from "react-router-dom";
 
 export const updateCache = (cache, query, addedBook) => {
   const uniqByName = (a) => {
@@ -40,6 +44,11 @@ const App = () => {
     },
   });
 
+  useEffect(() => {
+    const storedToken = localStorage.getItem("booklibrary-user-token");
+    if (storedToken) setToken(storedToken);
+  }, []);
+
   const logout = () => {
     setToken(null);
     localStorage.clear();
@@ -47,16 +56,36 @@ const App = () => {
   };
 
   return (
-    <div>
-      <Link to="/">authors</Link>
-      <Link to="/books">books</Link>
-      <Link to="/add"> add book</Link>
-      {token ? (
-        <button onClick={logout}>logout</button>
-      ) : (
-        <Link to="/login">login</Link>
-      )}
-      <Link to="/recommended">recommended</Link>
+    <Container>
+      <AppBar position="static" sx={{ marginBottom: "20px" }}>
+        <Toolbar>
+          <Box display="flex" flexGrow={1}>
+            <Button color="inherit" component={RouterLink} to="/">
+              authors
+            </Button>
+            <Button color="inherit" component={RouterLink} to="/books">
+              books
+            </Button>
+            <Button color="inherit" component={RouterLink} to="/add">
+              add book
+            </Button>
+            {token && (
+              <Button color="inherit" component={RouterLink} to="/recommended">
+                recommended
+              </Button>
+            )}
+          </Box>
+          {token ? (
+            <Button color="inherit" onClick={logout}>
+              logout
+            </Button>
+          ) : (
+            <Button color="inherit" component={RouterLink} to="/login">
+              login
+            </Button>
+          )}
+        </Toolbar>
+      </AppBar>
 
       <Routes>
         <Route path="/" element={<Authors />} />
@@ -65,7 +94,7 @@ const App = () => {
         <Route path="/add" element={<NewBook />} />
         <Route path="/recommended" element={<Recommended />} />
       </Routes>
-    </div>
+    </Container>
   );
 };
 

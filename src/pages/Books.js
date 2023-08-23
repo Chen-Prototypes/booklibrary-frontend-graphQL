@@ -1,6 +1,17 @@
 import { useQuery } from "@apollo/client";
 import { useState } from "react";
 import { ALL_BOOKS } from "../queries";
+import {
+  Typography,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  TableContainer,
+  Paper,
+} from "@mui/material";
 
 const Books = () => {
   const [cur_genre, setGenre] = useState("");
@@ -11,12 +22,15 @@ const Books = () => {
   const result = useQuery(ALL_BOOKS, {
     variables: { genre: cur_genre },
     fetchPolicy: "cache-and-network",
-    pollInterval: 2000, // tmp fix, make it so app subscription updates all querys for each genre
+    pollInterval: 2000,
   });
 
-  if (result.loading || genres_query.loading) return <div>loading...</div>;
-  if (result.error) return <div>Error fetching books!</div>;
-  if (genres_query.error) return <div>Error fetching genres!</div>;
+  if (result.loading || genres_query.loading)
+    return <Typography>loading...</Typography>;
+  if (result.error)
+    return <Typography color="error">Error fetching books!</Typography>;
+  if (genres_query.error)
+    return <Typography color="error">Error fetching genres!</Typography>;
 
   const books = result.data.allBooks;
   const genres = [
@@ -25,36 +39,43 @@ const Books = () => {
 
   return (
     <div>
-      <h2>books</h2>
+      <Typography variant="h4">Books</Typography>
+      <Typography>
+        In genre: <strong>{cur_genre !== "" ? cur_genre : "All Genres"}</strong>
+      </Typography>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Title</TableCell>
+              <TableCell>Author</TableCell>
+              <TableCell>Published</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {books.map((a) => (
+              <TableRow key={a.title}>
+                <TableCell>{a.title}</TableCell>
+                <TableCell>{a.author.name}</TableCell>
+                <TableCell>{a.published}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <Typography sx={{ marginTop: "15px", marginBottom: "5px" }}>Select Another Genre</Typography>
       <div>
-        in genre <strong>{cur_genre !== "" ? cur_genre : "all genres"}</strong>
+        {genres.map((genre) => (
+          <Button
+            variant="outlined"
+            color="primary"
+            key={genre}
+            onClick={() => setGenre(genre)}
+          >
+            {genre !== "" ? genre : "all genres"}
+          </Button>
+        ))}
       </div>
-      <table>
-        <tbody>
-          <tr>
-            <th></th>
-            <th>author</th>
-            <th>published</th>
-          </tr>
-          {books.map((a) => (
-            <tr key={a.title}>
-              <td>{a.title}</td>
-              <td>{a.author.name}</td>
-              <td>{a.published}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      {genres.map((genre) => (
-        <button
-          key={genre}
-          onClick={() => {
-            setGenre(genre);
-          }}
-        >
-          {genre !== "" ? genre : "all genres"}
-        </button>
-      ))}
     </div>
   );
 };

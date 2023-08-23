@@ -1,6 +1,20 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { useEffect, useState } from "react";
 import { CHANGE_BIRTH, ALL_AUTHORS } from "../queries";
+import {
+  Typography,
+  TextField,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+} from "@mui/material";
 
 const BirthAuthor = () => {
   const [name, setName] = useState("");
@@ -8,7 +22,7 @@ const BirthAuthor = () => {
 
   const query_result = useQuery(ALL_AUTHORS, {
     fetchPolicy: "network-only",
-    pollInterval: 2000, // tmp fix, see books 
+    pollInterval: 2000,
   });
 
   const [changeBirth, result] = useMutation(CHANGE_BIRTH, {
@@ -33,28 +47,35 @@ const BirthAuthor = () => {
     setBorn("");
   };
 
-  if (query_result.loading) return <div>loading...</div>;
+  if (query_result.loading) return <Typography>loading...</Typography>;
   const authors = query_result.data.allAuthors;
 
   return (
     <div>
-      <h2>Set birthyear</h2>
+      <Typography variant="h6" sx={{marginTop: "20px"}}>Set Author Birth Year</Typography>
       <form onSubmit={submit}>
-        <select value={name} onChange={(e) => setName(e.target.value)}>
-          <option value="" disabled>
-            Select an author
-          </option>
-          {authors.map((author) => (
-            <option key={author.id} value={author.name}>
-              {author.name}
-            </option>
-          ))}
-        </select>
-        <div>
-          birthyear:
-          <input value={born} onChange={(e) => setBorn(e.target.value)} />
-        </div>
-        <button type="submit">submit</button>
+        <FormControl fullWidth>
+          <InputLabel>Select an author</InputLabel>
+          <Select value={name} onChange={(e) => setName(e.target.value)}>
+            <MenuItem value="">
+              <em>Select an author</em>
+            </MenuItem>
+            {authors.map((author) => (
+              <MenuItem key={author.id} value={author.name}>
+                {author.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <TextField
+          label="Birthyear"
+          value={born}
+          onChange={(e) => setBorn(e.target.value)}
+          fullWidth
+        />
+        <Button type="submit" variant="contained" color="primary" sx={{marginTop: "5px"}}>
+          Submit
+        </Button>
       </form>
     </div>
   );
@@ -63,28 +84,31 @@ const BirthAuthor = () => {
 const Authors = () => {
   const result = useQuery(ALL_AUTHORS);
 
-  if (result.loading) return <div>loading...</div>;
+  if (result.loading) return <Typography>loading...</Typography>;
 
   const authors = result.data.allAuthors;
+
   return (
     <div>
-      <h2>authors</h2>
-      <table>
-        <tbody>
-          <tr>
-            <th></th>
-            <th>born</th>
-            <th>books</th>
-          </tr>
+      <Typography variant="h4">Authors</Typography>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>Name</TableCell>
+            <TableCell>Born</TableCell>
+            <TableCell>Books</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
           {authors.map((a) => (
-            <tr key={a.name}>
-              <td>{a.name}</td>
-              <td>{a.born}</td>
-              <td>{a.bookCount}</td>
-            </tr>
+            <TableRow key={a.name}>
+              <TableCell>{a.name}</TableCell>
+              <TableCell>{a.born}</TableCell>
+              <TableCell>{a.bookCount}</TableCell>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
       <BirthAuthor />
     </div>
   );
